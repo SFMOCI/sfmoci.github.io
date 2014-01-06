@@ -27,15 +27,15 @@
   }
 
   function addRepo(repo) {
-    var $item = $("<div>").addClass("col-sm-4");
+    var $item = $("<div>").addClass("col-sm-4 repo");
     var $link = $("<a>").attr("href", repoUrl(repo)).appendTo($item);
-    var $panel = $("<div>").addClass("repo panel panel-default " + (repo.language || '').toLowerCase()).appendTo($link);
+    var $panel = $("<div>").addClass("panel panel-default " + (repo.language || '').toLowerCase()).appendTo($link);
     var $heading = $("<div>").addClass("panel-heading").appendTo($panel);
     $heading.append($("<h3>").addClass("panel-title").text(repo.name));
     $heading.append($("<small>").text(repo.language || ''));
     var $body = $("<div>").addClass("panel-body").appendTo($panel);
     $body.append($("<p>").text(repoDescription(repo)));
-    $panel.append($("<div>").addClass("panel-footer").text(orgName(repo)));
+    $panel.append($("<div>").addClass("panel-footer " + (repo.owner.login || '').toLowerCase()).text(orgName(repo)));
     $item.appendTo("#repos");
   }
 

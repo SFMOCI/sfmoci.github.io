@@ -11,12 +11,6 @@ body{
     font-weight: normal;
 }
 
-.container p,
-.container li {
-    font-size: 1.2em;
-    line-height: 1.48;
-}
-
 /* Navbar */
 
 .navbar {
@@ -434,17 +428,23 @@ a img:hover{
     color: #ffffff;
 }
 
-.repo {
+.repo .panel {
     height: 300px;
 }
 
 .repo > a {
     display: block;
-    width: 100%;
-    height: 100%;
     overflow: hidden;
     text-decoration: none;
     color: inherit;
+    height: 300px;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.repo a:hover {
+    background: #efefef;
+    background: rgba(0, 0, 0, 0.05);
 }
 
 .repo .panel-footer {
@@ -463,8 +463,41 @@ a img:hover{
     font-size: 25px;
 }
 
+.panel-footer.sfmoci {
+    background-color: #a69aa0;
+}
+
+.panel-footer.sfcta {
+    background-color: #fad9aa;
+}
+
 /*  Language colors */
 .css > .panel-heading {
     background-color:#1f085e;
+    color: #ffffff;
+}
+
+.objective-c > .panel-heading {
+    background-color:#438eff;
+    color: #ffffff;
+}
+
+.php > .panel-heading {
+    background-color:#6e03c1;
+    color: #ffffff;
+}
+
+.java > .panel-heading {
+    background-color:#b07219;
+    color: #ffffff;
+}
+
+.python > .panel-heading {
+    background-color:#3581ba;
+    color: #ffffff;
+}
+
+.javascript > .panel-heading {
+    background-color:#f15501;
     color: #ffffff;
 }
