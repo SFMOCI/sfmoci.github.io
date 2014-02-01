@@ -501,3 +501,24 @@ a img:hover{
     background-color:#f15501;
     color: #ffffff;
 }
+
+.project-title {
+    font-family: "Montserrat", sans-serif;
+    font-weight: 300;
+    color: #ffffff;
+    text-transform: uppercase;
+    font-size: 2em;
+    margin-top: 30px;
+}
+
+.header {
+    margin-bottom: 30px;
+}
+
+.seal {
+    margin-right: 30px
+}
+
+.project-header-wrapper {
+    margin: 30px 0;
+}
