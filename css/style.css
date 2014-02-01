@@ -516,9 +516,37 @@ a img:hover{
 }
 
 .seal {
+    float: left;
     margin-right: 30px
 }
 
 .project-header-wrapper {
     margin: 30px 0;
+}
+
+@media(max-width:767px){
+    .repo .panel {
+        height: 400px;
+    }
+
+    .repo > a {
+        height: 400px;
+    }
+
+    .repo .panel-footer {
+        bottom: 0;
+    }
+
+    .header img.pull-left {
+        float: none;
+    }
+
+    .header {
+        text-align: center;
+    }
+
+    .seal {
+        float: none;
+        margin: 0;
+    }
 }
