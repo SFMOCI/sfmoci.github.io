@@ -1,14 +1,31 @@
+/*
+NOTICE
+The code herein was taken and modified in part from the Twitter open source portal - https://github.com/twitter/twitter.github.com
+Modifications were made to include multiple organization accounts and display them differently
+ */
+
 (function () {
-  // Put custom repo URL's in this object, keyed by repo name.
+  /*
+  To add an organization to the portal edit orgs and orgNames below
+  For example in your github URL for your organization, the username follows right after: http://www.github.com/[user]
+   */
   var orgs = ["sfmoci","sfcta"];
 
+  /*
+  Put the full title of your department below, keyed by the github user name you entered above
+  Don't forget to mind your commas and colons (no comma after the last entry in the list)
+   */
   var orgNames = {
     sfmoci : "San Francisco Mayor's Office of Civic Innovation",
-    sfcta: "San Francisco County Transportation Authority"
+    sfcta : "San Francisco County Transportation Authority"
   }
+  /*
+  That's it, you only need to edit above to add your organization
+   */
+
 
   function orgName(repo) {
-    return orgNames[repo.owner.login.toLowerCase()];
+    return orgNames[repo.owner.login.toLowerCase()] || repo.name;
   }
 
   var repoUrls = {
