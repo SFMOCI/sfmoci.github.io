@@ -45,7 +45,7 @@ Modifications were made to include multiple organization accounts and display th
 
   function addRepo(repo) {
     var $item = $("<div>").addClass("col-sm-4 repo");
-    var $link = $("<a>").attr("href", repoUrl(repo)).appendTo($item);
+    var $link = $("<a>").attr("href", repoUrl(repo)).attr("id",repo.id).appendTo($item);
     var $panel = $("<div>").addClass("panel panel-default " + (repo.language || '').toLowerCase()).appendTo($link);
     var $heading = $("<div>").addClass("panel-heading").appendTo($panel);
     $heading.append($("<h3>").addClass("panel-title").text(repo.name));
@@ -60,7 +60,6 @@ Modifications were made to include multiple organization accounts and display th
     orgIdx = orgIdx || 0;
     repos = repos || [];
     page = page || 1;
-    console.log('hello');
 
     var uri = "https://api.github.com/orgs/"+orgs[orgIdx]+"/repos?callback=?"
         + "&per_page=100"
@@ -70,7 +69,6 @@ Modifications were made to include multiple organization accounts and display th
       if (result.data && result.data.length > 0) {
         repos = repos.concat(result.data);
         addRepos(orgIdx, repos, page + 1);
-        console.log('add');
       }
       else if (orgs.length > orgIdx + 1) {
         addRepos(orgIdx + 1, repos);
