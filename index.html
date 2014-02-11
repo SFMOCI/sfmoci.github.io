@@ -41,15 +41,61 @@
       </div>
   </div>
 
-    <div class="container">
+  <nav class="navbar navbar-default" role="navigation">
+      <div class="container">
+          <!-- Brand and toggle get grouped for better mobile display -->
+          <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                  <span class="sr-only">Toggle navigation</span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+              </button>
+          </div>
+
+          <!-- Collect the nav links, forms, and other content for toggling -->
+          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+              <ul class="nav navbar-nav">
+                  <li><a href="#aboutModal" data-toggle="modal">About</a></li>
+              </ul>
+              <ul class="nav navbar-nav navbar-right">
+                  <li><a href="https://github.com/sfmoci/sfmoci.github.io#if-youre-an-sf-agencydepartment-that-would-like-to-be-listed-here">Are your city agency projects missing?</a></li>
+              </ul>
+          </div><!-- /.navbar-collapse -->
+      </div><!-- /.container-fluid -->
+  </nav>
+
+
+  <div class="container">
         <div id="repos" class="row">
 
         </div>
     </div><!-- /.container -->
 
 
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
+  <!-- Modal -->
+  <div class="modal fade" id="aboutModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                  <h4 class="modal-title" id="myModalLabel">About</h4>
+              </div>
+              <div class="modal-body">
+                  <p>This is an minimal implementation of a portal for San Francisco's GitHub-hosted open source projects. It's primary goal is to help the City and County coordinate many organizational repos across San Francisco in one easy to find place. The hope is that this serves to encourage other agencies looking to participate in open source projects to start hosting their own repos. Given the relatively decentralized structure of departments, this portal helps departments and agencies maintain a level of autonomy in their open source projects, while allowing people outside government to find projects across the City in one place.</p>
+                  <p>If you're a department or agency that would like to participate, <a href="https://github.com/sfmoci/sfmoci.github.io#if-youre-an-sf-agencydepartment-that-would-like-to-be-listed-here">read more here.</a></p>
+                  <p>This portal is an open source project as well, <a href="http://github.com/sfmoci/sfmoci.github.io">take a closer look on GitHub</a>.</p>
+              </div>
+              <div class="modal-footer">
+                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              </div>
+          </div>
+      </div>
+  </div>
+
+
+  <!-- Bootstrap core JavaScript
+  ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
     <script src="js/bootstrap.min.js"></script>

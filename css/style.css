@@ -139,9 +139,7 @@ a:hover {
     .navbar {
         min-height: 69px;
     }
-    .navbar-nav {
-        float: right;
-    }
+
     #icon-docs {
         padding-top: 30px;
     }
@@ -511,9 +509,6 @@ a img:hover{
     margin-top: 30px;
 }
 
-.header {
-    margin-bottom: 30px;
-}
 
 .seal {
     float: left;
