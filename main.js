@@ -110,10 +110,11 @@ Modifications were made to include multiple organization accounts and display th
             if (b.pushed_at < a.pushed_at) return -1;
             return 0;
           });
-
+          /*
           $.each(repos.slice(0, 3), function (i, repo) {
             addRecentlyUpdatedRepo(repo);
           });
+          */
         });
       }
     });
