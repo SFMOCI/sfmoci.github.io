@@ -9,7 +9,7 @@ Modifications were made to include multiple organization accounts and display th
   To add an organization to the portal edit orgs and orgNames below
   For example in your github URL for your organization, the username follows right after: http://www.github.com/[user]
    */
-  var orgs = ["sfmoci","sfcta"];
+  var orgs = ["sfgovdt","sfmoci","sfcta"];
 
   /*
   Put the full title of your department below, keyed by the github user name you entered above
@@ -17,7 +17,8 @@ Modifications were made to include multiple organization accounts and display th
    */
   var orgNames = {
     sfmoci : "San Francisco Mayor's Office of Civic Innovation",
-    sfcta : "San Francisco County Transportation Authority"
+    sfcta : "San Francisco County Transportation Authority",
+    sfgovdt : "San Francisco Department of Technology"
   }
   /*
   That's it, you only need to edit above to add your organization
@@ -37,6 +38,8 @@ Modifications were made to include multiple organization accounts and display th
 
   // Put custom repo descriptions in this object, keyed by repo name.
   var repoDescriptions = {
+    'sfgovdt/eas' : "The Enterprise Addressing System (EAS) is an open source, web-based application that allows employees of government agencies to query, update, and retire street addresses.",
+    CycleTracksWebsite : "Simple db and php code to catch data from iOS and Android CycleTracks apps."
   };
 
   function repoDescription(repo) {
@@ -56,26 +59,58 @@ Modifications were made to include multiple organization accounts and display th
     $item.appendTo("#repos");
   }
 
-  function addRepos(orgIdx, repos, page) {
+  function mapBitbucket(result) {
+    $.each(result.values, function(i,repo){
+      repo.pushed_at = repo.updated_on;
+      repo.created_at = repo.created_on;
+      repo.id = repo.full_name;
+      repo.name = repo.full_name;
+      repo.owner.login = repo.owner.username;
+      repo.html_url = repo.links.html.href;
+      console.log(repo.links.watchers.href);
+      $.getJSON(repo.links.watchers.href + "?callback=?", function(result){
+        repo.watchers = result.values.length;
+        console.log(repo.watchers);
+      });
+    });
+    return result;
+  }
+
+  function addRepos(orgIdx, repos, page, bitbucket) {
     orgIdx = orgIdx || 0;
     repos = repos || [];
     page = page || 1;
+    bitbucket = bitbucket || false;
 
-    var uri = "https://api.github.com/orgs/"+orgs[orgIdx]+"/repos?callback=?"
-        + "&per_page=100"
-        + "&page=" + page;
+    if (!bitbucket) {
+      var uri = "https://api.github.com/orgs/"+orgs[orgIdx]+"/repos?callback=?"
+          + "&per_page=100"
+          + "&page=" + page;
+    } else {
+      var uri = "https://bitbucket.org/api/2.0/repositories/" + orgs[orgIdx] +"?callback=?";
+    }
 
     $.getJSON(uri, function (result) {
-      if (result.data && result.data.length > 0) {
-        repos = repos.concat(result.data);
-        addRepos(orgIdx, repos, page + 1);
+      console.log(result);
+      if ((result.values && result.values.length > 0) || (result.data && result.data.length > 0)) {
+        if(bitbucket) {
+          result = mapBitbucket(result);
+          repos = repos.concat(result.values);
+          addRepos(orgIdx + 1, repos);
+        } else {
+          repos = repos.concat(result.data);
+          addRepos(orgIdx, repos, page + 1);
+        }
+      }
+      else if (!bitbucket && result.data.message == "Not Found") {
+        addRepos(orgIdx, repos, 1, true);
       }
       else if (orgs.length > orgIdx + 1) {
         addRepos(orgIdx + 1, repos);
       }
       else {
         $(function () {
-          $("#num-repos").text(repos.length);
+         // $("#num-repos").text(repos.length);
 
           // Convert pushed_at to Date.
           $.each(repos, function (i, repo) {
