@@ -67,10 +67,8 @@ Modifications were made to include multiple organization accounts and display th
       repo.name = repo.full_name;
       repo.owner.login = repo.owner.username;
       repo.html_url = repo.links.html.href;
-      console.log(repo.links.watchers.href);
       $.getJSON(repo.links.watchers.href + "?callback=?", function(result){
         repo.watchers = result.values.length;
-        console.log(repo.watchers);
       });
     });
     return result;
