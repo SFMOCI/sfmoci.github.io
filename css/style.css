@@ -469,6 +469,10 @@ a img:hover{
     background-color: #fad9aa;
 }
 
+.panel-footer.sfgovdt {
+    background-color: #7D73FF;
+}
+
 /*  Language colors */
 .css > .panel-heading {
     background-color:#1f085e;
