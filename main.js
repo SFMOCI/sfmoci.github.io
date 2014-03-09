@@ -89,7 +89,6 @@ Modifications were made to include multiple organization accounts and display th
     }
 
     $.getJSON(uri, function (result) {
-      console.log(result);
       if ((result.values && result.values.length > 0) || (result.data && result.data.length > 0)) {
         if(bitbucket) {
           result = mapBitbucket(result);
