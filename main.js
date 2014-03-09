@@ -38,7 +38,7 @@ Modifications were made to include multiple organization accounts and display th
 
   // Put custom repo descriptions in this object, keyed by repo name.
   var repoDescriptions = {
-    'sfgovdt/eas' : "The Enterprise Addressing System (EAS) is an open source, web-based application that allows employees of government agencies to query, update, and retire street addresses.",
+    eas : "The Enterprise Addressing System (EAS) is an open source, web-based application that allows employees of government agencies to query, update, and retire street addresses.",
     CycleTracksWebsite : "Simple db and php code to catch data from iOS and Android CycleTracks apps."
   };
 
@@ -64,7 +64,6 @@ Modifications were made to include multiple organization accounts and display th
       repo.pushed_at = repo.updated_on;
       repo.created_at = repo.created_on;
       repo.id = repo.full_name;
-      repo.name = repo.full_name;
       repo.owner.login = repo.owner.username;
       repo.html_url = repo.links.html.href;
       $.getJSON(repo.links.watchers.href + "?callback=?", function(result){
