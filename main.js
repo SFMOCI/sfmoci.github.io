@@ -60,6 +60,7 @@ Modifications were made to include multiple organization accounts and display th
   }
 
   function mapBitbucket(result) {
+    // Map required values from Bitbucket API to GitHub equivalent for easier processing
     $.each(result.values, function(i,repo){
       repo.pushed_at = repo.updated_on;
       repo.created_at = repo.created_on;
