@@ -12,7 +12,9 @@ Modifications were made to include multiple organization accounts and display th
   var orgs = ["sfgovdt","sfmoci","sfcta","datasf","OSVTAC"];
 
   /*
-  Put the full title of your department below, keyed by the github user name you entered above
+  Put the full title of your department below, keyed by the github user
+  name you entered above, but normalized to lower-case.
+
   Don't forget to mind your commas and colons (no comma after the last entry in the list)
    */
   var orgNames = {
@@ -20,7 +22,7 @@ Modifications were made to include multiple organization accounts and display th
     sfcta : "San Francisco County Transportation Authority",
     sfgovdt : "San Francisco Department of Technology",
     datasf: "DataSF",
-    OSVTAC: "San Francisco Open Source Voting System Technical Advisory Committee"
+    osvtac: "San Francisco Open Source Voting System Technical Advisory Committee"
   }
   /*
   That's it, you only need to edit above to add your organization
