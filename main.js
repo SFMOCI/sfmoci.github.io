@@ -9,7 +9,7 @@ Modifications were made to include multiple organization accounts and display th
   To add an organization to the portal edit orgs and orgNames below
   For example in your github URL for your organization, the username follows right after: http://www.github.com/[user]
    */
-  var orgs = ["sfgovdt","sfmoci","sfcta","datasf"];
+  var orgs = ["sfgovdt","sfmoci","sfcta","datasf","OSVTAC"];
 
   /*
   Put the full title of your department below, keyed by the github user name you entered above
@@ -19,7 +19,8 @@ Modifications were made to include multiple organization accounts and display th
     sfmoci : "San Francisco Mayor's Office of Civic Innovation",
     sfcta : "San Francisco County Transportation Authority",
     sfgovdt : "San Francisco Department of Technology",
-    datasf: "DataSF"
+    datasf: "DataSF",
+    OSVTAC: "San Francisco Open Source Voting System Technical Advisory Committee"
   }
   /*
   That's it, you only need to edit above to add your organization
