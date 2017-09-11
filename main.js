@@ -34,24 +34,21 @@ Modifications were made to include multiple organization accounts and display th
     sfgovdt: "https://bitbucket.org/sfgovdt/"
   };
 
-  function orgName(repo) {
-    return orgNames[repo.owner.login.toLowerCase()] || repo.name;
-  }
-
-  var repoUrls = {
-  };
-
-  function repoUrl(repo) {
-    return repoUrls[repo.name] || repo.html_url;
-  }
-
   // Put custom repo descriptions in this object, keyed by repo name.
   var repoDescriptions = {
     eas : "The Enterprise Addressing System (EAS) is an open source, web-based application that allows employees of government agencies to query, update, and retire street addresses.",
     CycleTracksWebsite : "Simple db and php code to catch data from iOS and Android CycleTracks apps."
   };
 
+  var repoUrls = {
+  };
+
+  function orgName(repo) {
+    return orgNames[repo.owner.login.toLowerCase()] || repo.name;
+  }
+
   function orgToUrl(org) {
+    // First check for a non-GitHub URL.
     if (org in orgUrls) {
       return orgUrls[org.toLowerCase()];
     }
@@ -84,6 +81,10 @@ Modifications were made to include multiple organization accounts and display th
       var org = fullNameToOrg[fullName];
       addOrg(org, fullName);
     }
+  }
+
+  function repoUrl(repo) {
+    return repoUrls[repo.name] || repo.html_url;
   }
 
   function repoDescription(repo) {
