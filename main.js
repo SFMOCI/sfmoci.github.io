@@ -23,11 +23,16 @@ Modifications were made to include multiple organization accounts and display th
     sfgovdt : "San Francisco Department of Technology",
     datasf: "DataSF",
     osvtac: "San Francisco Open Source Voting System Technical Advisory Committee"
-  }
+  };
   /*
   That's it, you only need to edit above to add your organization
    */
 
+  // This stores custom organization URLs for those cases where the
+  // organization does not have a standard GitHub URL.
+  var orgUrls = {
+    sfgovdt: "https://bitbucket.org/sfgovdt/"
+  };
 
   function orgName(repo) {
     return orgNames[repo.owner.login.toLowerCase()] || repo.name;
@@ -45,6 +50,41 @@ Modifications were made to include multiple organization accounts and display th
     eas : "The Enterprise Addressing System (EAS) is an open source, web-based application that allows employees of government agencies to query, update, and retire street addresses.",
     CycleTracksWebsite : "Simple db and php code to catch data from iOS and Android CycleTracks apps."
   };
+
+  function orgToUrl(org) {
+    if (org in orgUrls) {
+      return orgUrls[org.toLowerCase()];
+    }
+    return "https://github.com/" + org;
+  }
+
+  function addOrg(org, fullName) {
+    var anchor = $("<a>").text(fullName);
+    var url = orgToUrl(org);
+    anchor.attr("href", url);
+    var $item = $("<li>").append(anchor);
+    $("#orgs").append($item);
+  }
+
+  function addOrgs() {
+    // First, sort by name.
+    var fullNames = [];
+    var fullNameToOrg = {};
+    for (var i = 0; i < orgs.length; i++) {
+      var org = orgs[i];
+      var fullName = orgNames[org.toLowerCase()];
+      fullNames.push(fullName);
+      fullNameToOrg[fullName] = org;
+    }
+    fullNames.sort();
+
+    // Then add the organizations.
+    for (var i = 0; i < fullNames.length; i++) {
+      var fullName = fullNames[i];
+      var org = fullNameToOrg[fullName];
+      addOrg(org, fullName);
+    }
+  }
 
   function repoDescription(repo) {
     return repoDescriptions[repo.name] || repo.description;
@@ -156,5 +196,6 @@ Modifications were made to include multiple organization accounts and display th
     });
   }
 
+  addOrgs();
   addRepos();
 })();
