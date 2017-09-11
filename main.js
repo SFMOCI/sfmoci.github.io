@@ -9,7 +9,7 @@ Modifications were made to include multiple organization accounts and display th
   To add an organization to the portal edit orgs and orgNames below
   For example in your github URL for your organization, the username follows right after: http://www.github.com/[user]
    */
-  var orgs = ["sfgovdt","sfmoci","sfcta","datasf","OSVTAC"];
+  var orgs = ["sfgovdt","SFMOCI","sfcta","DataSF","OSVTAC"];
 
   /*
   Put the full title of your department below, keyed by the github user
