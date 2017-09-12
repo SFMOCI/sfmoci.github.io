@@ -45,9 +45,10 @@ Modifications were made to include multiple organization accounts and display th
 
   // Return the URL for an organization.
   function orgToUrl(org) {
+    var orgLower = org.toLowerCase();
     // First check for a non-GitHub URL.
-    if (org in orgUrls) {
-      return orgUrls[org.toLowerCase()];
+    if (orgLower in orgUrls) {
+      return orgUrls[orgLower];
     }
     return "https://github.com/" + org;
   }
