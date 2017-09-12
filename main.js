@@ -6,7 +6,7 @@ Modifications were made to include multiple organization accounts and display th
 
 (function () {
   /*
-  To add an organization to the portal edit orgs and orgNames below
+  To add an organization to the portal edit orgs and orgNameMap below
   For example in your github URL for your organization, the username follows right after: http://www.github.com/[user]
    */
   var orgs = ["sfgovdt","SFMOCI","sfcta","DataSF","OSVTAC"];
@@ -17,7 +17,7 @@ Modifications were made to include multiple organization accounts and display th
 
   Don't forget to mind your commas and colons (no comma after the last entry in the list)
    */
-  var orgNames = {
+  var orgNameMap = {
     sfmoci : "San Francisco Mayor's Office of Civic Innovation",
     sfcta : "San Francisco County Transportation Authority",
     sfgovdt : "San Francisco Department of Technology",
@@ -43,10 +43,7 @@ Modifications were made to include multiple organization accounts and display th
   var repoUrls = {
   };
 
-  function orgName(repo) {
-    return orgNames[repo.owner.login.toLowerCase()] || repo.name;
-  }
-
+  // Return the URL for an organization.
   function orgToUrl(org) {
     // First check for a non-GitHub URL.
     if (org in orgUrls) {
@@ -55,31 +52,33 @@ Modifications were made to include multiple organization accounts and display th
     return "https://github.com/" + org;
   }
 
-  function addOrg(org, fullName) {
-    var anchor = $("<a>").text(fullName);
+  // Add an organization to index.html.
+  function addOrg(org, orgName) {
+    var anchor = $("<a>").text(orgName);
     var url = orgToUrl(org);
     anchor.attr("href", url);
     var $item = $("<li>").append(anchor);
     $("#orgs").append($item);
   }
 
+  // Add all organizations to index.html.
   function addOrgs() {
-    // First, sort by name.
-    var fullNames = [];
-    var fullNameToOrg = {};
+    // First, sort the organizations by name.
+    var orgNames = [];
+    var orgNameToOrg = {};
     for (var i = 0; i < orgs.length; i++) {
       var org = orgs[i];
-      var fullName = orgNames[org.toLowerCase()];
-      fullNames.push(fullName);
-      fullNameToOrg[fullName] = org;
+      var orgName = orgNameMap[org.toLowerCase()];
+      orgNames.push(orgName);
+      orgNameToOrg[orgName] = org;
     }
-    fullNames.sort();
+    orgNames.sort();
 
     // Then add the organizations.
-    for (var i = 0; i < fullNames.length; i++) {
-      var fullName = fullNames[i];
-      var org = fullNameToOrg[fullName];
-      addOrg(org, fullName);
+    for (var i = 0; i < orgNames.length; i++) {
+      var orgName = orgNames[i];
+      var org = orgNameToOrg[orgName];
+      addOrg(org, orgName);
     }
   }
 
@@ -91,6 +90,10 @@ Modifications were made to include multiple organization accounts and display th
     return repoDescriptions[repo.name] || repo.description;
   }
 
+  function repoToOrgName(repo) {
+    return orgNameMap[repo.owner.login.toLowerCase()] || repo.name;
+  }
+
   function addRepo(repo) {
     var $item = $("<div>").addClass("col-sm-4 repo");
     var $link = $("<a>").attr("href", repoUrl(repo)).attr("id",repo.id).appendTo($item);
@@ -100,7 +103,7 @@ Modifications were made to include multiple organization accounts and display th
     $heading.append($("<small>").text(repo.language || ''));
     var $body = $("<div>").addClass("panel-body").appendTo($panel);
     $body.append($("<p>").text(repoDescription(repo)));
-    $panel.append($("<div>").addClass("panel-footer " + (repo.owner.login || '').toLowerCase()).text(orgName(repo)));
+    $panel.append($("<div>").addClass("panel-footer " + (repo.owner.login || '').toLowerCase()).text(repoToOrgName(repo)));
     $item.appendTo("#repos");
   }
 
