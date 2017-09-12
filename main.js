@@ -6,10 +6,10 @@ Modifications were made to include multiple organization accounts and display th
 
 (function () {
   /*
-  To add an organization to the portal edit orgs and orgNames below
+  To add an organization to the portal edit orgs and orgNameMap below
   For example in your github URL for your organization, the username follows right after: http://www.github.com/[user]
    */
-  var orgs = ["sfgovdt","sfmoci","sfcta","datasf","OSVTAC"];
+  var orgs = ["sfgovdt","SFMOCI","sfcta","DataSF","OSVTAC"];
 
   /*
   Put the full title of your department below, keyed by the github user
@@ -17,28 +17,22 @@ Modifications were made to include multiple organization accounts and display th
 
   Don't forget to mind your commas and colons (no comma after the last entry in the list)
    */
-  var orgNames = {
+  var orgNameMap = {
     sfmoci : "San Francisco Mayor's Office of Civic Innovation",
     sfcta : "San Francisco County Transportation Authority",
     sfgovdt : "San Francisco Department of Technology",
     datasf: "DataSF",
     osvtac: "San Francisco Open Source Voting System Technical Advisory Committee"
-  }
+  };
   /*
   That's it, you only need to edit above to add your organization
    */
 
-
-  function orgName(repo) {
-    return orgNames[repo.owner.login.toLowerCase()] || repo.name;
-  }
-
-  var repoUrls = {
+  // This stores custom organization URLs for those cases where the
+  // organization does not have a standard GitHub URL.
+  var orgUrls = {
+    sfgovdt: "https://bitbucket.org/sfgovdt/"
   };
-
-  function repoUrl(repo) {
-    return repoUrls[repo.name] || repo.html_url;
-  }
 
   // Put custom repo descriptions in this object, keyed by repo name.
   var repoDescriptions = {
@@ -46,8 +40,59 @@ Modifications were made to include multiple organization accounts and display th
     CycleTracksWebsite : "Simple db and php code to catch data from iOS and Android CycleTracks apps."
   };
 
+  var repoUrls = {
+  };
+
+  // Return the URL for an organization.
+  function orgToUrl(org) {
+    var orgLower = org.toLowerCase();
+    // First check for a non-GitHub URL.
+    if (orgLower in orgUrls) {
+      return orgUrls[orgLower];
+    }
+    return "https://github.com/" + org;
+  }
+
+  // Add an organization to index.html.
+  function addOrg(org, orgName) {
+    var anchor = $("<a>").text(orgName);
+    var url = orgToUrl(org);
+    anchor.attr("href", url);
+    var $item = $("<li>").append(anchor);
+    $("#orgs").append($item);
+  }
+
+  // Add all organizations to index.html.
+  function addOrgs() {
+    // First, sort the organizations by name.
+    var orgNames = [];
+    var orgNameToOrg = {};
+    for (var i = 0; i < orgs.length; i++) {
+      var org = orgs[i];
+      var orgName = orgNameMap[org.toLowerCase()];
+      orgNames.push(orgName);
+      orgNameToOrg[orgName] = org;
+    }
+    orgNames.sort();
+
+    // Then add the organizations.
+    for (var i = 0; i < orgNames.length; i++) {
+      var orgName = orgNames[i];
+      var org = orgNameToOrg[orgName];
+      addOrg(org, orgName);
+    }
+  }
+
+  function repoUrl(repo) {
+    return repoUrls[repo.name] || repo.html_url;
+  }
+
   function repoDescription(repo) {
     return repoDescriptions[repo.name] || repo.description;
+  }
+
+  function repoToOrgName(repo) {
+    return orgNameMap[repo.owner.login.toLowerCase()] || repo.name;
   }
 
   function addRepo(repo) {
@@ -59,7 +104,7 @@ Modifications were made to include multiple organization accounts and display th
     $heading.append($("<small>").text(repo.language || ''));
     var $body = $("<div>").addClass("panel-body").appendTo($panel);
     $body.append($("<p>").text(repoDescription(repo)));
-    $panel.append($("<div>").addClass("panel-footer " + (repo.owner.login || '').toLowerCase()).text(orgName(repo)));
+    $panel.append($("<div>").addClass("panel-footer " + (repo.owner.login || '').toLowerCase()).text(repoToOrgName(repo)));
     $item.appendTo("#repos");
   }
 
@@ -156,5 +201,6 @@ Modifications were made to include multiple organization accounts and display th
     });
   }
 
+  addOrgs();
   addRepos();
 })();
