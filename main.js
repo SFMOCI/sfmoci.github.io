@@ -5,34 +5,6 @@ Modifications were made to include multiple organization accounts and display th
  */
 
 (function () {
-  /*
-  To add an organization to the portal edit orgs and orgNameMap below
-  For example in your github URL for your organization, the username follows right after: http://www.github.com/[user]
-   */
-  var orgs = ["sfgovdt","SFMOCI","sfcta","DataSF","OSVTAC"];
-
-  /*
-  Put the full title of your department below, keyed by the github user
-  name you entered above, but normalized to lower-case.
-
-  Don't forget to mind your commas and colons (no comma after the last entry in the list)
-   */
-  var orgNameMap = {
-    sfmoci : "San Francisco Mayor's Office of Civic Innovation",
-    sfcta : "San Francisco County Transportation Authority",
-    sfgovdt : "San Francisco Department of Technology",
-    datasf: "DataSF",
-    osvtac: "San Francisco Open Source Voting System Technical Advisory Committee"
-  };
-  /*
-  That's it, you only need to edit above to add your organization
-   */
-
-  // This stores custom organization URLs for those cases where the
-  // organization does not have a standard GitHub URL.
-  var orgUrls = {
-    sfgovdt: "https://bitbucket.org/sfgovdt/"
-  };
 
   // Put custom repo descriptions in this object, keyed by repo name.
   var repoDescriptions = {
@@ -40,46 +12,40 @@ Modifications were made to include multiple organization accounts and display th
     CycleTracksWebsite : "Simple db and php code to catch data from iOS and Android CycleTracks apps."
   };
 
-  var repoUrls = {
-  };
+  // readOrgs() populates these three data structures from index.html.
+  // Putting the raw data in index.html is more SEO-friendly since the
+  // links are available in the original HTML as opposed to being
+  // "injected" by the javascript at render-time.
+  var orgs = [];
+  var orgNameMap = {};
+  var orgUrls = {};
 
-  // Return the URL for an organization.
-  function orgToUrl(org) {
-    var orgLower = org.toLowerCase();
-    // First check for a non-GitHub URL.
-    if (orgLower in orgUrls) {
-      return orgUrls[orgLower];
+  var repoUrls = {};
+
+  // Extract the organization username from the URL.
+  function urlToOrg(url) {
+    // Remove the trailing slash, if present.
+    if (url[url.length - 1] == "/") {
+      url = url.slice(0, -1);
     }
-    return "https://github.com/" + org;
+    var index = url.lastIndexOf("/") + 1;
+    var org = url.slice(index);
+
+    return org;
   }
 
-  // Add an organization to index.html.
-  function addOrg(org, orgName) {
-    var anchor = $("<a>").text(orgName);
-    var url = orgToUrl(org);
-    anchor.attr("href", url);
-    var $item = $("<li>").append(anchor);
-    $("#orgs").append($item);
-  }
+  // Read the organization data from index.html.
+  function readOrgs() {
+    var anchors = $("#orgs li a");
+    for (var i = 0; i < anchors.length; i++) {
+      var anchor = $(anchors[i]);
+      var orgName = anchor.text();
+      var url = anchor.attr("href");
+      var org = urlToOrg(url).toLowerCase();
 
-  // Add all organizations to index.html.
-  function addOrgs() {
-    // First, sort the organizations by name.
-    var orgNames = [];
-    var orgNameToOrg = {};
-    for (var i = 0; i < orgs.length; i++) {
-      var org = orgs[i];
-      var orgName = orgNameMap[org.toLowerCase()];
-      orgNames.push(orgName);
-      orgNameToOrg[orgName] = org;
-    }
-    orgNames.sort();
-
-    // Then add the organizations.
-    for (var i = 0; i < orgNames.length; i++) {
-      var orgName = orgNames[i];
-      var org = orgNameToOrg[orgName];
-      addOrg(org, orgName);
+      orgs.push(org);
+      orgNameMap[org] = orgName;
+      orgUrls[org] = url;
     }
   }
 
@@ -208,6 +174,6 @@ Modifications were made to include multiple organization accounts and display th
     });
   }
 
-  addOrgs();
+  readOrgs();
   addRepos();
 })();
