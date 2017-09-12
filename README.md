@@ -10,7 +10,7 @@ This is an minimal implementation of a portal for San Francisco's GitHub hosted 
 
 ### You already have a GitHub organizational account
 
-1. Go to [`index.html`](https://github.com/SFMOCI/sfmoci.github.io/blob/master/index.html)
+1. Go to [`index.html`](https://github.com/SFMOCI/sfmoci.github.io/blob/master/index.html#L72)
    and click edit.
 2. Use the web-based editor to add your organization name and GitHub
    (or Bitbucket) URL to the HTML list in the middle of the file.
