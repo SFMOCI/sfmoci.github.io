@@ -96,6 +96,7 @@ Modifications were made to include multiple organization accounts and display th
   }
 
   function addRepo(repo) {
+    var description = repoDescription(repo);
     var $item = $("<div>").addClass("col-sm-4 repo");
     var $link = $("<a>").attr("href", repoUrl(repo)).attr("id",repo.id).appendTo($item);
     var $panel = $("<div>").addClass("panel panel-default " + (repo.language || '').toLowerCase()).appendTo($link);
@@ -103,7 +104,13 @@ Modifications were made to include multiple organization accounts and display th
     $heading.append($("<h3>").addClass("panel-title").text(repo.name));
     $heading.append($("<small>").text(repo.language || ''));
     var $body = $("<div>").addClass("panel-body").appendTo($panel);
-    $body.append($("<p>").text(repoDescription(repo)));
+    var $para = $("<p>");
+    if (description) {
+      $para.text(description);
+    } else {
+      $para.append($("<em>").text("No description provided."));
+    }
+    $body.append($para);
     $panel.append($("<div>").addClass("panel-footer " + (repo.owner.login || '').toLowerCase()).text(repoToOrgName(repo)));
     $item.appendTo("#repos");
   }
