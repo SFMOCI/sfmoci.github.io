@@ -10,8 +10,10 @@ This is an minimal implementation of a portal for San Francisco's GitHub hosted 
 
 ### You already have a GitHub organizational account
 
-1. Go to [main.js](https://github.com/SFMOCI/sfmoci.github.io/blob/master/main.js) and click edit
-2. Use the web-based editor to add your GitHub organizational account name at the top of main.js
+1. Go to [`index.html`](https://github.com/SFMOCI/sfmoci.github.io/blob/master/index.html#L72)
+   and click edit.
+2. Use the web-based editor to add your organization name and GitHub
+   (or Bitbucket) URL to the HTML list in the middle of the file.
 3. Below the editor window, there's a box to enter a required message, enter something like "Added organization SFO to the portal"
 4. Click Propose File Change at the bottom
 5. You can review changes on the next screen and to finish the edit, click the green button labeled "Send Pull Request"
