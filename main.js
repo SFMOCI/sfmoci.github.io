@@ -102,12 +102,14 @@ Modifications were made to include multiple organization accounts and display th
     page = page || 1;
     bitbucket = bitbucket || false;
 
+    var org = orgs[orgIdx];
+
     if (!bitbucket) {
-      var uri = "https://api.github.com/orgs/"+orgs[orgIdx]+"/repos?callback=?"
+      var uri = "https://api.github.com/orgs/" + org + "/repos?callback=?"
           + "&per_page=100"
           + "&page=" + page;
     } else {
-      var uri = "https://bitbucket.org/api/2.0/repositories/" + orgs[orgIdx] +"?callback=?";
+      var uri = "https://bitbucket.org/api/2.0/repositories/" + org + "?callback=?";
     }
 
     $.getJSON(uri, function (result) {
