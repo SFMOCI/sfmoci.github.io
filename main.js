@@ -96,13 +96,15 @@ Modifications were made to include multiple organization accounts and display th
     return result;
   }
 
-  function addRepos(orgIdx, repos, page, bitbucket) {
+  function addRepos(orgIdx, repos, page) {
     orgIdx = orgIdx || 0;
     repos = repos || [];
     page = page || 1;
-    bitbucket = bitbucket || false;
 
     var org = orgs[orgIdx];
+    var orgUrl = orgUrls[org];
+    var urlPrefix = orgUrl.slice(0, 21);
+    var bitbucket = (urlPrefix == "https://bitbucket.org");
 
     if (!bitbucket) {
       var uri = "https://api.github.com/orgs/" + org + "/repos?callback=?"
@@ -114,7 +116,7 @@ Modifications were made to include multiple organization accounts and display th
 
     $.getJSON(uri, function (result) {
       if ((result.values && result.values.length > 0) || (result.data && result.data.length > 0)) {
-        if(bitbucket) {
+        if (bitbucket) {
           result = mapBitbucket(result);
           repos = repos.concat(result.values);
           addRepos(orgIdx + 1, repos);
@@ -122,9 +124,6 @@ Modifications were made to include multiple organization accounts and display th
           repos = repos.concat(result.data);
           addRepos(orgIdx, repos, page + 1);
         }
-      }
-      else if (!bitbucket && result.data.message == "Not Found") {
-        addRepos(orgIdx, repos, 1, true);
       }
       else if (orgs.length > orgIdx + 1) {
         addRepos(orgIdx + 1, repos);
