@@ -149,24 +149,26 @@ Modifications were made to include multiple organization accounts and display th
     var urlPrefix = orgUrl.slice(0, 21);
     var bitbucket = (urlPrefix == "https://bitbucket.org");
 
-    if (!bitbucket) {
-      var uri = "https://api.github.com/orgs/" + org + "/repos?callback=?"
-          + "&per_page=100"
-          + "&page=" + page;
-    } else {
+    if (bitbucket) {
       var uri = "https://bitbucket.org/api/2.0/repositories/" + org + "?callback=?";
+    } else {
+      var uri = "https://api.github.com/orgs/" + org + "/repos?callback=?&per_page=100&page=" + page;
     }
 
     $.getJSON(uri, function (result) {
       if ((result.values && result.values.length > 0) || (result.data && result.data.length > 0)) {
+        var newRepos;
         if (bitbucket) {
           result = mapBitbucket(result);
-          repos = repos.concat(result.values);
-          addRepos(orgIdx + 1, repos);
+          newRepos = result.values;
+          orgIdx += 1;
+          page = 1;
         } else {
-          repos = repos.concat(result.data);
-          addRepos(orgIdx, repos, page + 1);
+          newRepos = result.data;
+          page += 1;
         }
+        repos = repos.concat(newRepos);
+        addRepos(orgIdx, repos, page);
       }
       else if (orgs.length > orgIdx + 1) {
         addRepos(orgIdx + 1, repos);
