@@ -139,12 +139,9 @@ Modifications were made to include multiple organization accounts and display th
     return result;
   }
 
-  function addRepos(orgIdx, repos, page) {
-    orgIdx = orgIdx || 0;
-    repos = repos || [];
-    page = page || 1;
-
-    var org = orgs[orgIdx];
+  // Args:
+  //   callback: a function that accepts an array of repos.
+  function fetchOrgRepos(repos, org, callback, page) {
     var orgUrl = orgUrls[org];
     var urlPrefix = orgUrl.slice(0, 21);
     var bitbucket = (urlPrefix == "https://bitbucket.org");
@@ -156,29 +153,39 @@ Modifications were made to include multiple organization accounts and display th
     }
 
     $.getJSON(uri, function (result) {
-      if ((result.values && result.values.length > 0) || (result.data && result.data.length > 0)) {
-        var newRepos;
+      var newRepos = result.values || result.data;
+      if (newRepos && newRepos.length > 0) {
+        // Then the API returned some repos.
         if (bitbucket) {
           result = mapBitbucket(result);
-          newRepos = result.values;
-          orgIdx += 1;
-          page = 1;
-        } else {
-          newRepos = result.data;
-          page += 1;
         }
         repos = repos.concat(newRepos);
-        addRepos(orgIdx, repos, page);
       }
-      else if (orgs.length > orgIdx + 1) {
-        addRepos(orgIdx + 1, repos);
-      }
-      else {
-        insertRepos(repos);
+      if (!bitbucket && newRepos.length >= 100) {
+        // Then get the next page of results.
+        page += 1;
+        fetchOrgRepos(repos, org, callback, page);
+      } else {
+        callback(repos);
       }
     });
   }
 
+  function addRepos(repos, orgIndex) {
+    if (orgIndex >= orgs.length) {
+      // Then we are done.
+      insertRepos(repos);
+      return;
+    }
+
+    function callback(repos) {
+      addRepos(repos, orgIndex + 1);
+    }
+
+    var org = orgs[orgIndex];
+    fetchOrgRepos(repos, org, callback, 1);
+  }
+
   readOrgs();
-  addRepos();
+  addRepos([], 0);
 })();
