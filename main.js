@@ -142,14 +142,15 @@ Modifications were made to include multiple organization accounts and display th
   // Args:
   //   callback: a function that accepts an array of repos.
   function fetchOrgRepos(repos, org, callback, page) {
+    var uri;
     var orgUrl = orgUrls[org];
     var urlPrefix = orgUrl.slice(0, 21);
     var bitbucket = (urlPrefix == "https://bitbucket.org");
 
     if (bitbucket) {
-      var uri = "https://bitbucket.org/api/2.0/repositories/" + org + "?callback=?";
+      uri = "https://bitbucket.org/api/2.0/repositories/" + org + "?callback=?";
     } else {
-      var uri = "https://api.github.com/orgs/" + org + "/repos?callback=?&per_page=100&page=" + page;
+      uri = "https://api.github.com/orgs/" + org + "/repos?callback=?&per_page=100&page=" + page;
     }
 
     $.getJSON(uri, function (result) {
@@ -163,8 +164,7 @@ Modifications were made to include multiple organization accounts and display th
       }
       if (!bitbucket && newRepos.length >= 100) {
         // Then get the next page of results.
-        page += 1;
-        fetchOrgRepos(repos, org, callback, page);
+        fetchOrgRepos(repos, org, callback, page + 1);
       } else {
         callback(repos);
       }
