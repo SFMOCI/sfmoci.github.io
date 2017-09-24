@@ -141,11 +141,9 @@ Modifications were made to include multiple organization accounts and display th
 
   // Args:
   //   callback: a function that accepts an array of repos.
-  function fetchOrgRepos(repos, org, callback, page) {
+  function fetchOrgRepos(repos, org, bitbucket, callback, page) {
+    page = page || 1;
     var uri;
-    var orgUrl = orgUrls[org];
-    var urlPrefix = orgUrl.slice(0, 21);
-    var bitbucket = (urlPrefix == "https://bitbucket.org");
 
     if (bitbucket) {
       uri = "https://bitbucket.org/api/2.0/repositories/" + org + "?callback=?";
@@ -164,7 +162,7 @@ Modifications were made to include multiple organization accounts and display th
       }
       if (!bitbucket && newRepos.length >= 100) {
         // Then get the next page of results.
-        fetchOrgRepos(repos, org, callback, page + 1);
+        fetchOrgRepos(repos, org, bitbucket, callback, page + 1);
       } else {
         callback(repos);
       }
@@ -178,12 +176,14 @@ Modifications were made to include multiple organization accounts and display th
       return;
     }
 
-    function callback(repos) {
-      addRepos(repos, orgIndex + 1);
-    }
-
     var org = orgs[orgIndex];
-    fetchOrgRepos(repos, org, callback, 1);
+    var orgUrl = orgUrls[org];
+    var urlPrefix = orgUrl.slice(0, 21);
+    var bitbucket = (urlPrefix == "https://bitbucket.org");
+
+    fetchOrgRepos(repos, org, bitbucket, function (repos) {
+      addRepos(repos, orgIndex + 1);
+    });
   }
 
   readOrgs();
