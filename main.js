@@ -61,7 +61,7 @@ Modifications were made to include multiple organization accounts and display th
     return orgNameMap[repo.owner.login.toLowerCase()] || repo.name;
   }
 
-  function addRepo(repo) {
+  function insertRepo(repo) {
     var description = repoDescription(repo);
     var $item = $("<div>").addClass("col-sm-4 repo");
     var $link = $("<a>").attr("href", repoUrl(repo)).attr("id",repo.id).appendTo($item);
@@ -79,6 +79,49 @@ Modifications were made to include multiple organization accounts and display th
     $body.append($para);
     $panel.append($("<div>").addClass("panel-footer " + (repo.owner.login || '').toLowerCase()).text(repoToOrgName(repo)));
     $item.appendTo("#repos");
+  }
+
+  function insertRepos(repos) {
+    // $("#num-repos").text(repos.length);
+
+    // Convert pushed_at to Date.
+    $.each(repos, function (i, repo) {
+      repo.pushed_at = new Date(repo.pushed_at);
+
+      var weekHalfLife = 1.146 * Math.pow(10, -9);
+
+      var pushDelta = (new Date) - Date.parse(repo.pushed_at);
+      var createdDelta = (new Date) - Date.parse(repo.created_at);
+
+      var weightForPush = 1;
+      var weightForWatchers = 1.314 * Math.pow(10, 7);
+
+      repo.hotness = weightForPush * Math.pow(Math.E, -1 * weekHalfLife * pushDelta);
+      repo.hotness += weightForWatchers * repo.watchers / createdDelta;
+    });
+
+    // Sort by highest # of watchers.
+    repos.sort(function (a, b) {
+      if (a.hotness < b.hotness) return 1;
+      if (b.hotness < a.hotness) return -1;
+      return 0;
+    });
+
+    $.each(repos, function (i, repo) {
+      insertRepo(repo);
+    });
+
+    // Sort by most-recently pushed to.
+    repos.sort(function (a, b) {
+      if (a.pushed_at < b.pushed_at) return 1;
+      if (b.pushed_at < a.pushed_at) return -1;
+      return 0;
+    });
+    /*
+    $.each(repos.slice(0, 3), function (i, repo) {
+      addRecentlyUpdatedRepo(repo);
+    });
+    */
   }
 
   function mapBitbucket(result) {
@@ -129,48 +172,7 @@ Modifications were made to include multiple organization accounts and display th
         addRepos(orgIdx + 1, repos);
       }
       else {
-        $(function () {
-         // $("#num-repos").text(repos.length);
-
-          // Convert pushed_at to Date.
-          $.each(repos, function (i, repo) {
-            repo.pushed_at = new Date(repo.pushed_at);
-
-            var weekHalfLife = 1.146 * Math.pow(10, -9);
-
-            var pushDelta = (new Date) - Date.parse(repo.pushed_at);
-            var createdDelta = (new Date) - Date.parse(repo.created_at);
-
-            var weightForPush = 1;
-            var weightForWatchers = 1.314 * Math.pow(10, 7);
-
-            repo.hotness = weightForPush * Math.pow(Math.E, -1 * weekHalfLife * pushDelta);
-            repo.hotness += weightForWatchers * repo.watchers / createdDelta;
-          });
-
-          // Sort by highest # of watchers.
-          repos.sort(function (a, b) {
-            if (a.hotness < b.hotness) return 1;
-            if (b.hotness < a.hotness) return -1;
-            return 0;
-          });
-
-          $.each(repos, function (i, repo) {
-            addRepo(repo);
-          });
-
-          // Sort by most-recently pushed to.
-          repos.sort(function (a, b) {
-            if (a.pushed_at < b.pushed_at) return 1;
-            if (b.pushed_at < a.pushed_at) return -1;
-            return 0;
-          });
-          /*
-          $.each(repos.slice(0, 3), function (i, repo) {
-            addRecentlyUpdatedRepo(repo);
-          });
-          */
-        });
+        insertRepos(repos);
       }
     });
   }
