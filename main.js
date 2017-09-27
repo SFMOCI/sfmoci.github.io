@@ -61,7 +61,7 @@ Modifications were made to include multiple organization accounts and display th
     return orgNameMap[repo.owner.login.toLowerCase()] || repo.name;
   }
 
-  function addRepo(repo) {
+  function insertRepo(repo) {
     var description = repoDescription(repo);
     var $item = $("<div>").addClass("col-sm-4 repo");
     var $link = $("<a>").attr("href", repoUrl(repo)).attr("id",repo.id).appendTo($item);
@@ -81,6 +81,49 @@ Modifications were made to include multiple organization accounts and display th
     $item.appendTo("#repos");
   }
 
+  function insertRepos(repos) {
+    // $("#num-repos").text(repos.length);
+
+    // Convert pushed_at to Date.
+    $.each(repos, function (i, repo) {
+      repo.pushed_at = new Date(repo.pushed_at);
+
+      var weekHalfLife = 1.146 * Math.pow(10, -9);
+
+      var pushDelta = (new Date) - Date.parse(repo.pushed_at);
+      var createdDelta = (new Date) - Date.parse(repo.created_at);
+
+      var weightForPush = 1;
+      var weightForWatchers = 1.314 * Math.pow(10, 7);
+
+      repo.hotness = weightForPush * Math.pow(Math.E, -1 * weekHalfLife * pushDelta);
+      repo.hotness += weightForWatchers * repo.watchers / createdDelta;
+    });
+
+    // Sort by highest # of watchers.
+    repos.sort(function (a, b) {
+      if (a.hotness < b.hotness) return 1;
+      if (b.hotness < a.hotness) return -1;
+      return 0;
+    });
+
+    $.each(repos, function (i, repo) {
+      insertRepo(repo);
+    });
+
+    // Sort by most-recently pushed to.
+    repos.sort(function (a, b) {
+      if (a.pushed_at < b.pushed_at) return 1;
+      if (b.pushed_at < a.pushed_at) return -1;
+      return 0;
+    });
+    /*
+    $.each(repos.slice(0, 3), function (i, repo) {
+      addRecentlyUpdatedRepo(repo);
+    });
+    */
+  }
+
   function mapBitbucket(result) {
     // Map required values from Bitbucket API to GitHub equivalent for easier processing
     $.each(result.values, function(i,repo){
@@ -96,84 +139,53 @@ Modifications were made to include multiple organization accounts and display th
     return result;
   }
 
-  function addRepos(orgIdx, repos, page, bitbucket) {
-    orgIdx = orgIdx || 0;
-    repos = repos || [];
+  // Args:
+  //   callback: a function that accepts an array of repos.
+  function fetchOrgRepos(repos, org, bitbucket, callback, page) {
     page = page || 1;
-    bitbucket = bitbucket || false;
+    var uri;
 
-    if (!bitbucket) {
-      var uri = "https://api.github.com/orgs/"+orgs[orgIdx]+"/repos?callback=?"
-          + "&per_page=100"
-          + "&page=" + page;
+    if (bitbucket) {
+      uri = "https://bitbucket.org/api/2.0/repositories/" + org + "?callback=?";
     } else {
-      var uri = "https://bitbucket.org/api/2.0/repositories/" + orgs[orgIdx] +"?callback=?";
+      uri = "https://api.github.com/orgs/" + org + "/repos?callback=?&per_page=100&page=" + page;
     }
 
     $.getJSON(uri, function (result) {
-      if ((result.values && result.values.length > 0) || (result.data && result.data.length > 0)) {
-        if(bitbucket) {
+      var newRepos = result.values || result.data;
+      if (newRepos && newRepos.length > 0) {
+        // Then the API returned some repos.
+        if (bitbucket) {
           result = mapBitbucket(result);
-          repos = repos.concat(result.values);
-          addRepos(orgIdx + 1, repos);
-        } else {
-          repos = repos.concat(result.data);
-          addRepos(orgIdx, repos, page + 1);
         }
+        repos = repos.concat(newRepos);
       }
-      else if (!bitbucket && result.data.message == "Not Found") {
-        addRepos(orgIdx, repos, 1, true);
-      }
-      else if (orgs.length > orgIdx + 1) {
-        addRepos(orgIdx + 1, repos);
-      }
-      else {
-        $(function () {
-         // $("#num-repos").text(repos.length);
-
-          // Convert pushed_at to Date.
-          $.each(repos, function (i, repo) {
-            repo.pushed_at = new Date(repo.pushed_at);
-
-            var weekHalfLife = 1.146 * Math.pow(10, -9);
-
-            var pushDelta = (new Date) - Date.parse(repo.pushed_at);
-            var createdDelta = (new Date) - Date.parse(repo.created_at);
-
-            var weightForPush = 1;
-            var weightForWatchers = 1.314 * Math.pow(10, 7);
-
-            repo.hotness = weightForPush * Math.pow(Math.E, -1 * weekHalfLife * pushDelta);
-            repo.hotness += weightForWatchers * repo.watchers / createdDelta;
-          });
-
-          // Sort by highest # of watchers.
-          repos.sort(function (a, b) {
-            if (a.hotness < b.hotness) return 1;
-            if (b.hotness < a.hotness) return -1;
-            return 0;
-          });
-
-          $.each(repos, function (i, repo) {
-            addRepo(repo);
-          });
-
-          // Sort by most-recently pushed to.
-          repos.sort(function (a, b) {
-            if (a.pushed_at < b.pushed_at) return 1;
-            if (b.pushed_at < a.pushed_at) return -1;
-            return 0;
-          });
-          /*
-          $.each(repos.slice(0, 3), function (i, repo) {
-            addRecentlyUpdatedRepo(repo);
-          });
-          */
-        });
+      if (!bitbucket && newRepos.length >= 100) {
+        // Then get the next page of results.
+        fetchOrgRepos(repos, org, bitbucket, callback, page + 1);
+      } else {
+        callback(repos);
       }
     });
   }
 
+  function addRepos(repos, orgIndex) {
+    if (orgIndex >= orgs.length) {
+      // Then we are done.
+      insertRepos(repos);
+      return;
+    }
+
+    var org = orgs[orgIndex];
+    var orgUrl = orgUrls[org];
+    var urlPrefix = orgUrl.slice(0, 21);
+    var bitbucket = (urlPrefix == "https://bitbucket.org");
+
+    fetchOrgRepos(repos, org, bitbucket, function (repos) {
+      addRepos(repos, orgIndex + 1);
+    });
+  }
+
   readOrgs();
-  addRepos();
+  addRepos([], 0);
 })();
