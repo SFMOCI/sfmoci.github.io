@@ -27,7 +27,6 @@ OR
 ### You don't have a GitHub organizational account, but want to learn more?
 
 - If you're a user on GitHub, go ahead and [submit an issue](https://github.com/SFMOCI/sfmoci.github.io/issues/new) and we'll get in touch
-- Or reach out directly to Jason Lally at the Mayor's Office of Civic Innovation
 
 ## Contributing
 
